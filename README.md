@@ -3,7 +3,7 @@
 ### 1. Checking out feature branch
 
 Make sure you're currently on `main`. 
-Branch from `main` into a feature branch.
+Branch from `main` into a feature branch called `feature-mainpy`.
 
 <details>
 <summary>Hint</summary>

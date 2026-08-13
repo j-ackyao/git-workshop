@@ -10,7 +10,8 @@ def build():
     _generate_files()
 
 def _generate_files():
-    _commit_new_main()
+    if not _commit_new_main():
+        return
 
     base = pathlib.Path(__file__).resolve().parent
     build_dir = (base / ".." / "build").resolve()
@@ -35,20 +36,31 @@ def _generate_files():
     for p in created:
         print(p)
 
-def _commit_new_main():
+def _commit_new_main() -> bool:
     # generates new commit in main
+
+    cp = subprocess.run(["git", "diff", "--name-only", "--cached"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)  # staged changes
+    staged = [line.strip() for line in cp.stdout.splitlines() if line.strip()]
+    if 'src/main.py' not in staged:
+        print("Stage main.py first!")
+        return False
+
     result = subprocess.run(
         ["git", "branch", "--show-current"], capture_output=True, text=True
     )
 
     if result.stdout.strip() == "main":
-        return
+        return True
     
     base = pathlib.Path(__file__).resolve().parent
     main_dir = (base / "main.py").resolve()
     subprocess.run(
+        ["git", "stash"], stdout=subprocess.DEVNULL
+    )
+    subprocess.run(
         ["git", "checkout", "main"], stdout=subprocess.DEVNULL
     )
+
     subprocess.run(
         ["git", "checkout", "main-alt", "--", main_dir], stdout=subprocess.DEVNULL
     )
@@ -61,3 +73,8 @@ def _commit_new_main():
     subprocess.run(
         ["git", "checkout", "-"], stdout=subprocess.DEVNULL
     )
+    subprocess.run(
+        ["git", "stash", "pop"], stdout=subprocess.DEVNULL
+    )
+
+    return True
