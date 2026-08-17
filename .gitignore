@@ -1,0 +1,3 @@
+build/
+__pycache__/
+build_errors.txt
