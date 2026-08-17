@@ -4,7 +4,7 @@ def main():
     """
     Main entry to call build()
     """
-    build()
+    build(False)
 
 if __name__ == "__main__":
     main()

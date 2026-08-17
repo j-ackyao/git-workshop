@@ -5,12 +5,17 @@ import random
 """
 Mocks a build process, generates random hexes in random files inside `../build/`
 """
-def build():
-    _generate_files()
+def build(use_hex: bool = True):
+    _generate_files(use_hex)
 
-def _generate_files():
-
+def _generate_files(use_hex):
     base = pathlib.Path(__file__).resolve().parent
+    error_path = (base / ".." / "build_errors.txt")
+
+    if not use_hex:
+        error_path.write_text("Not hex unsupported!")
+        return
+
     build_dir = (base / ".." / "build").resolve()
     bin_dir = build_dir / "bin"
     txt_dir = build_dir / "txt"
